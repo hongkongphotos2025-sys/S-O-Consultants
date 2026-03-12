@@ -1,0 +1,140 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>S.O. Consulting</title>
+<link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+</head>
+
+<body>
+
+<header>
+<h2>S.O. Consulting</h2>
+<nav>
+<a href="explorer.html">Explorer</a>
+<a href="database.html">Database</a>
+<a href="heatmap.html">Heatmap</a>
+<a href="tradeflows.html">Trade Flows</a>
+<a href="prices.html">Prices</a>
+<a href="forecast.html">Forecast</a>
+<a href="analysis.html">Request Analysis</a>
+</nav>
+</header>
+
+<section class="hero">
+<h1>Industrial Intelligence for Global Materials Markets</h1>
+<p>Global consulting and intelligence platform for cement and industrial materials.</p>
+</section>
+
+<section class="section">
+<h2>Global Cement Intelligence Map</h2>
+<div id="map"></div>
+</section>
+
+<section class="section">
+<h2>Global Cement Capacity Tracker</h2>
+
+<div class="grid">
+
+<div class="card">
+<div id="plants" class="counter">0</div>
+<p>Plants Tracked</p>
+</div>
+
+<div class="card">
+<div id="countries" class="counter">0</div>
+<p>Countries Covered</p>
+</div>
+
+<div class="card">
+<div id="capacity" class="counter">0</div>
+<p>Capacity (Mt)</p>
+</div>
+
+</div>
+
+</section>
+
+<section class="section">
+<h2>Global Intelligence Clock</h2>
+
+<div class="grid">
+
+<div class="card">
+<h3>India (Mumbai)</h3>
+<p id="indiaTime"></p>
+</div>
+
+<div class="card">
+<h3>Your Local Time</h3>
+<p id="localTime"></p>
+</div>
+
+<div class="card">
+<h3>Your Location</h3>
+<p id="visitorLocation">Detecting...</p>
+</div>
+
+</div>
+
+</section>
+
+<script>
+
+var map=L.map('map').setView([20,0],2);
+
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
+
+fetch('data/assets.json')
+.then(r=>r.json())
+.then(data=>{
+
+let plants=data.length;
+let countries=[...new Set(data.map(p=>p.country))].length;
+let capacity=data.reduce((a,b)=>a+(b.capacity||0),0);
+
+animate("plants",plants);
+animate("countries",countries);
+animate("capacity",capacity);
+
+data.forEach(p=>{
+if(p.lat && p.lon){
+L.marker([p.lat,p.lon]).addTo(map)
+.bindPopup("<b>"+p.name+"</b><br>"+p.company);
+}
+});
+
+});
+
+function animate(id,target){
+let count=0;
+let step=target/50;
+let interval=setInterval(()=>{
+count+=step;
+if(count>=target){count=target;clearInterval(interval);}
+document.getElementById(id).innerText=Math.floor(count);
+},40);
+}
+
+function updateClocks(){
+const india=new Date().toLocaleTimeString("en-US",{timeZone:"Asia/Kolkata"});
+const local=new Date().toLocaleTimeString();
+document.getElementById("indiaTime").innerText=india;
+document.getElementById("localTime").innerText=local;
+}
+setInterval(updateClocks,1000);
+updateClocks();
+
+fetch("https://ipapi.co/json/")
+.then(res=>res.json())
+.then(data=>{
+document.getElementById("visitorLocation").innerText=data.city+", "+data.country_name;
+});
+
+</script>
+
+</body>
+</html>

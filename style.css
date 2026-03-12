@@ -1,0 +1,12 @@
+
+body{margin:0;font-family:Arial;background:#fff;color:#1a1a1a}
+header{display:flex;justify-content:space-between;align-items:center;padding:20px 8%;border-bottom:1px solid #eee}
+nav a{margin-left:18px;text-decoration:none;color:#333;font-weight:500}
+.hero{padding:140px 8%;background:linear-gradient(120deg,#0A3D91,#2F80ED);color:white}
+.section{padding:80px 8%}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:30px}
+.card{border:1px solid #eee;border-radius:8px;padding:25px;text-align:center}
+#map{height:600px;width:100%;margin-top:30px}
+table{width:100%;border-collapse:collapse;margin-top:20px}
+th,td{padding:12px;border-bottom:1px solid #eee}
+.counter{font-size:40px;font-weight:bold;color:#0A3D91}
