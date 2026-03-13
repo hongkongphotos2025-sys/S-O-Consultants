@@ -1,0 +1,103 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>S.O. Consulting</title>
+<link rel="stylesheet" href="style.css">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+</head>
+<body>
+
+<header>
+<h2>S.O. Consulting Pvt Ltd</h2>
+<nav>
+<a href="index.html">Home</a>
+<a href="building-materials.html">Building Materials</a>
+<a href="contact.html">Contact</a>
+</nav>
+</header>
+
+<section class="hero">
+<video autoplay muted loop>
+<source src="https://cdn.coverr.co/videos/coverr-industrial-plant-1571/1080p.mp4" type="video/mp4">
+</video>
+<div>
+<h1>Industrial Intelligence Across Global Markets</h1>
+<p>Consulting expertise across building materials, glass and industrial supply chains.</p>
+</div>
+</section>
+
+<section class="section">
+<h2>Global Industry Dashboard</h2>
+<div class="grid">
+<div class="card"><div id="plants" class="counter">0</div><p>Plants Tracked</p></div>
+<div class="card"><div id="countries" class="counter">0</div><p>Countries Covered</p></div>
+<div class="card"><div id="capacity" class="counter">0</div><p>Total Capacity (Mt)</p></div>
+</div>
+</section>
+
+<section class="section">
+<h2>Global Cement Map</h2>
+<div id="map"></div>
+</section>
+
+<section class="section">
+<h2>Global Intelligence Clock</h2>
+<div class="grid">
+<div class="card"><h3>India (Mumbai)</h3><p id="indiaTime"></p></div>
+<div class="card"><h3>Your Local Time</h3><p id="localTime"></p></div>
+<div class="card"><h3>Your Location</h3><p id="visitorLocation">Detecting...</p></div>
+</div>
+</section>
+
+<footer>
+<p>© S.O. Consulting Pvt Ltd</p>
+</footer>
+
+<script>
+
+fetch('data/assets.json').then(r=>r.json()).then(data=>{
+
+let plants=data.length;
+let countries=[...new Set(data.map(p=>p.country))].length;
+let capacity=data.reduce((a,b)=>a+(b.capacity||0),0);
+
+document.getElementById("plants").innerText=plants;
+document.getElementById("countries").innerText=countries;
+document.getElementById("capacity").innerText=capacity;
+
+var map=L.map('map').setView([20,0],2);
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
+
+data.forEach(p=>{
+if(p.lat && p.lon){
+L.circleMarker([p.lat,p.lon],{radius:4}).addTo(map)
+.bindPopup("<b>"+p.name+"</b><br>"+p.company);
+}
+});
+
+});
+
+function updateClocks(){
+const india=new Date().toLocaleTimeString("en-US",{timeZone:"Asia/Kolkata"});
+const local=new Date().toLocaleTimeString();
+document.getElementById("indiaTime").innerText=india;
+document.getElementById("localTime").innerText=local;
+}
+
+setInterval(updateClocks,1000);
+updateClocks();
+
+fetch("https://ipapi.co/json/")
+.then(res=>res.json())
+.then(data=>{
+document.getElementById("visitorLocation").innerText=data.city+", "+data.country_name;
+});
+
+</script>
+
+</body>
+</html>
